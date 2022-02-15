@@ -121,5 +121,5 @@ class Merchart_Sign_Up_Views(generics.CreateAPIView):
             except jwt.ExpiredSignatureError:
                 raise AuthenticationFailed('Unauthenticated!')
 
-            return Response('ok good')
+            return Response('ok')
 """
