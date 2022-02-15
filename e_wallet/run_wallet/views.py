@@ -7,7 +7,7 @@ from rest_framework import generics, permissions, serializers, viewsets, status
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import Account,Merchant,Transaction
-from .serializers import AccountSerializer,MerchatSerializer,generate_access_token,generate_refresh_token,Nested,account_token
+from .serializers import AccountSerializer,MerchatSerializer,generate_access_token,generate_refresh_token,Nested
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -103,6 +103,14 @@ class Topup(APIView):
                 raise AuthenticationFailed('Unauthenticated!')
 
     
+class Comfirm:
+    pass
+
+class verify:
+    pass
+
+class Cancel:
+    pass
 
 
 """
