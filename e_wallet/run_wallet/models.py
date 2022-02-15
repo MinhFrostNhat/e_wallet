@@ -50,7 +50,7 @@ class Transaction(models.Model):
     amount = models.FloatField()
     extraData = models.CharField(max_length=255)
     status = models.CharField(
-        max_length=20, choices=STATUSES, default=CREATE)
+        max_length=20, choices=STATUSES, default=CREATE,editable=False)
     merchant_id = models.ForeignKey(Merchant,on_delete=models.CASCADE, null=True)
     income_account_id = models.ForeignKey(Account,on_delete=models.CASCADE, null=True,related_name='income')
     outcome_account_id = models.ForeignKey(Account,on_delete=models.CASCADE, null=True,related_name='outcome')
