@@ -167,7 +167,7 @@ class verify(APIView):
                     
 
             else: 
-                return Response('not ok',status.HTTP_401_UNAUTHORIZED)
+                return Response('not ok ',status.HTTP_401_UNAUTHORIZED)
 
 class Cancel(APIView):
      def post(self, request):
