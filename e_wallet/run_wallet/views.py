@@ -103,14 +103,77 @@ class Topup(APIView):
                 raise AuthenticationFailed('Unauthenticated!')
 
     
-class Comfirm:
-    pass
+class Comfirm(APIView):
+    def post(self, request):
+            token = request.COOKIES.get('accesstoken')
 
-class verify:
-    pass
+            if not token:
+                raise AuthenticationFailed('Unauthenticated!')
 
-class Cancel:
-    pass
+            try:
+                 payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+            except jwt.ExpiredSignatureError:
+                raise AuthenticationFailed('Unauthenticated!')
+
+            if payload['account_type'] == "personal":
+                transaction_id = request.data['transaction_id']
+                check = Transaction.objects.filter( transactionId= transaction_id).first()
+                if check:
+                    a = {
+                            "code": "SUC",
+                            "message": "string"
+                            }
+                    check.complete_update()
+                    return Response(a)
+
+            else: 
+                return Response('not ok',status.HTTP_401_UNAUTHORIZED)
+
+class verify(APIView):
+    def post(self, request):
+            token = request.COOKIES.get('accesstoken')
+
+            if not token:
+                raise AuthenticationFailed('Unauthenticated!')
+
+            try:
+                 payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+            except jwt.ExpiredSignatureError:
+                raise AuthenticationFailed('Unauthenticated!')
+
+            if payload['account_type'] == "personal":
+                transaction_id = request.data['transaction_id']
+                check = Transaction.objects.filter( transactionId= transaction_id).first()
+                if check:
+                    check.verify_update()
+                    return Response(status=status.HTTP_200_OK)
+
+            else: 
+                return Response('not ok',status.HTTP_401_UNAUTHORIZED)
+
+class Cancel(APIView):
+     def post(self, request):
+            token = request.COOKIES.get('accesstoken')
+
+            if not token:
+                raise AuthenticationFailed('Unauthenticated!')
+
+            try:
+                 payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+            except jwt.ExpiredSignatureError:
+                raise AuthenticationFailed('Unauthenticated!')
+
+            if payload['account_type'] == "personal":
+                transaction_id = request.data['transaction_id']
+                check = Transaction.objects.filter( transactionId= transaction_id).first()
+                if check:
+                    check.cancel_update()
+                    return Response(status=status.HTTP_200_OK)
+                         
+                    
+
+            else: 
+                return Response('not ok',status.HTTP_401_UNAUTHORIZED)
 
 
 """

@@ -56,6 +56,18 @@ class Transaction(models.Model):
     outcome_account_id = models.ForeignKey(Account,on_delete=models.CASCADE, null=True,related_name='outcome')
     signature = models.CharField(default=hashlib.md5((str(merchant_id)+str(amount)+str(extraData)).encode()).hexdigest()
                              , max_length=255)
+    
+    def complete_update(self):
+        self.status = 'CONFIRM'
+        self.save()
+    
+    def verify_update(self):
+        self.status = 'VERIFY'
+        self.save()
+
+    def cancel_update(self):
+        self.status = 'CANCEL'
+        self.save()
 
 
 
