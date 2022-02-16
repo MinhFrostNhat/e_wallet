@@ -118,16 +118,18 @@ class Comfirm(APIView):
             if payload['account_type'] == "personal":
                 transaction_id = request.data['transaction_id']
                 check = Transaction.objects.filter( transactionId= transaction_id).first()
-                if check:
+                if check.status == "INITIALIZED":
                     a = {
                             "code": "SUC",
                             "message": "string"
                             }
-                    check.complete_update()
+                    check.confirm_update()
                     return Response(a)
+                else:
+                    return Response('not ok', status= status.HTTP_400_BAD_REQUEST)
 
             else: 
-                return Response('not ok',status.HTTP_401_UNAUTHORIZED)
+                return Response('not ok',status.HTTP_400_BAD_REQUEST)
 
 class verify(APIView):
     def post(self, request):
@@ -144,9 +146,25 @@ class verify(APIView):
             if payload['account_type'] == "personal":
                 transaction_id = request.data['transaction_id']
                 check = Transaction.objects.filter( transactionId= transaction_id).first()
-                if check:
+                if check.status == "CONFIRM":
                     check.verify_update()
-                    return Response(status=status.HTTP_200_OK)
+                    a= Account.objects.filter(account_id= check.income_account_id.account_id).first()
+                    b= Account.objects.filter(account_id= check.outcome_account_id.account_id).first()
+                    c = a.balance
+                    d = b.balance
+                    e = c + float(check.amount)
+                    f = d - float(check.amount)
+                    if d > 0 and f > 0:
+                        change_income_account = Account.objects.filter(account_id = check.income_account_id.account_id).update(balance = e)
+                        change_outcome_account = Account.objects.filter(account_id = check.outcome_account_id.account_id).update(balance = f)
+                        check.completed_update()
+                        return Response('verify',status= status.HTTP_202_ACCEPTED)
+                    else:
+                        check.fail_update()
+                        return Response('not enough monney',status= status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response('not ok',status=status.HTTP_400_BAD_REQUEST)
+                    
 
             else: 
                 return Response('not ok',status.HTTP_401_UNAUTHORIZED)
@@ -169,9 +187,9 @@ class Cancel(APIView):
                 if check:
                     check.cancel_update()
                     return Response(status=status.HTTP_200_OK)
+                else: 
+                    return Response('not ok',status.HTTP_400_BAD_REQUEST)
                          
-                    
-
             else: 
                 return Response('not ok',status.HTTP_401_UNAUTHORIZED)
 

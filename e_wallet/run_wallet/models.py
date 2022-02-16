@@ -32,32 +32,34 @@ class Merchant(models.Model):
     account_id = models.UUIDField(default=uuid.uuid4, editable=False)
 
 class Transaction(models.Model):
-    CREATE = 'CREATE'
+    FAILED= 'FAILED'
+    INITIALIZED= 'INITIALIZED'
     CONFIRM = 'CONFIRM'
     VERIFY = 'VERIFY'
     CANCEL ='CANCEL'
     EXPIRE = 'EXPIRE'
-    SUCCESS = 'SUCCESS'
+    COMPLETED = 'COMPLETED'
     STATUSES = (
-        (CREATE, CREATE),
+        (FAILED,FAILED),
+        (INITIALIZED, INITIALIZED),
         (CONFIRM, CONFIRM),
         (VERIFY, VERIFY),
         (CANCEL,CANCEL),
         (EXPIRE,EXPIRE),
-        (SUCCESS,SUCCESS),
+        (COMPLETED,COMPLETED),
     )
     transactionId =  models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     amount = models.FloatField()
     extraData = models.CharField(max_length=255)
     status = models.CharField(
-        max_length=20, choices=STATUSES, default=CREATE,editable=False)
+        max_length=20, choices=STATUSES, default=INITIALIZED,editable=False)
     merchant_id = models.ForeignKey(Merchant,on_delete=models.CASCADE, null=True)
     income_account_id = models.ForeignKey(Account,on_delete=models.CASCADE, null=True,related_name='income')
     outcome_account_id = models.ForeignKey(Account,on_delete=models.CASCADE, null=True,related_name='outcome')
     signature = models.CharField(default=hashlib.md5((str(merchant_id)+str(amount)+str(extraData)).encode()).hexdigest()
                              , max_length=255)
     
-    def complete_update(self):
+    def confirm_update(self):
         self.status = 'CONFIRM'
         self.save()
     
@@ -69,5 +71,12 @@ class Transaction(models.Model):
         self.status = 'CANCEL'
         self.save()
 
+    def fail_update(self):
+        self.status = 'FAILED'
+        self.save()
+    
+    def completed_update(self):
+        self.status = 'COMPLETED'
+        self.save()
 
 
