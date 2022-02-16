@@ -4,6 +4,7 @@ from .views import Sign_Up_Views,Merchart_Sign_Up_Views,account_token,Topup,Tran
 from rest_framework_simplejwt import views as jwt_views
   
 app_name = 'run_wallet'
+
 urlpatterns = [
     path('account/signup/',Sign_Up_Views.as_view(), name='index'),
     path('merchart/signup/',Merchart_Sign_Up_Views.as_view(), name='index1'),
@@ -25,4 +26,6 @@ urlpatterns = [
     path('api/token/refresh/',
          jwt_views.TokenRefreshView.as_view(),
          name ='token_refresh'),
+
+         
 ]
