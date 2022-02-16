@@ -176,21 +176,3 @@ class Cancel(APIView):
                 return Response('not ok',status.HTTP_401_UNAUTHORIZED)
 
 
-"""
-
-class Merchart_Sign_Up_Views(generics.CreateAPIView):
-        queryset = Merchant.objects.all()
-        serializer_class = MerchatSerializer
-        def get(self, request):
-            token = request.COOKIES.get('accesstoken')
-
-            if not token:
-                raise AuthenticationFailed('Unauthenticated!')
-
-            try:
-                 payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
-            except jwt.ExpiredSignatureError:
-                raise AuthenticationFailed('Unauthenticated!')
-
-            return Response('ok')
-"""
