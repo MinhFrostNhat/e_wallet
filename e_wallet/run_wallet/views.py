@@ -76,15 +76,13 @@ class Topup(APIView):
     queryset = Account.objects.all()
     def post(self, request, format=None,**kwargs):
         token = request.COOKIES.get('accesstoken')
-
         if not token:
                 raise AuthenticationFailed('Unauthenticated!')
-
         try:
                  payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
                  if payload['account_type'] == "issuer":
-                     user = Account.objects.filter(account_id=kwargs["accid"]).first()
-                     if user.account_type == "issuer":
+                    user = Account.objects.filter(account_id=kwargs["accid"]).first()
+                    if user.account_type == "issuer":
                         account_id = request.data['account_id']
                         amount = request.data['amount']
                         check = Account.objects.filter(account_id = account_id).first()
@@ -98,7 +96,9 @@ class Topup(APIView):
                             x = Account.objects.filter(account_id = account_id).update(balance = b+ a)
                             return Response(status = status.HTTP_200_OK)
                         else: return Response("not ok",status=status.HTTP_400_BAD_REQUEST)
-                     else: return Response("not ok",status=status.HTTP_400_BAD_REQUEST)
+                    else: return Response("not ok",status=status.HTTP_400_BAD_REQUEST)
+                 else:
+                     return Response('token not ok',status=status.HTTP_401_UNAUTHORIZED)
         except jwt.ExpiredSignatureError:
                 raise AuthenticationFailed('Unauthenticated!')
 
