@@ -163,7 +163,7 @@ class verify(APIView):
                         check.fail_update()
                         return Response('not enough monney',status= status.HTTP_400_BAD_REQUEST)
                 else:
-                    return Response('not ok',status=status.HTTP_400_BAD_REQUEST)
+                    return Response('not ok ',status=status.HTTP_400_BAD_REQUEST)
                     
 
             else: 
