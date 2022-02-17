@@ -134,7 +134,7 @@ class Comfirm(APIView):
 
                 else:
                     check.expire_update()
-                    return Response('timeout', status= status.HTTP_400_BAD_REQUEST)
+                    return Response('timeout ', status= status.HTTP_400_BAD_REQUEST)
 
             else: 
                 return Response('token wrong',status.HTTP_400_BAD_REQUEST)
