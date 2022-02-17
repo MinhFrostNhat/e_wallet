@@ -102,7 +102,8 @@ class Topup(APIView):
         except jwt.ExpiredSignatureError:
                 raise AuthenticationFailed('Unauthenticated!')
 
-    
+from datetime import datetime,timedelta
+
 class Comfirm(APIView):
     def post(self, request):
             token = request.COOKIES.get('accesstoken')
@@ -116,20 +117,27 @@ class Comfirm(APIView):
                 raise AuthenticationFailed('Unauthenticated!')
 
             if payload['account_type'] == "personal":
-                transaction_id = request.data['transaction_id']
-                check = Transaction.objects.filter( transactionId= transaction_id).first()
-                if check.status == "INITIALIZED":
-                    a = {
-                            "code": "SUC",
-                            "message": "string"
-                            }
-                    check.confirm_update()
-                    return Response(a)
+                register_time = datetime.now()
+                ten_minutes_later = (register_time + timedelta(minutes=10))
+                if ten_minutes_later > datetime.now():
+                    transaction_id = request.data['transaction_id']
+                    check = Transaction.objects.filter( transactionId= transaction_id).first()
+                    if check.status == "INITIALIZED":
+                        a = {
+                                "code": "SUC",
+                                "message": "string"
+                                }
+                        check.confirm_update()
+                        return Response(a)
+                    else:
+                        return Response('timeout', status= status.HTTP_400_BAD_REQUEST)
+
                 else:
-                    return Response('not ok', status= status.HTTP_400_BAD_REQUEST)
+                    check.expire_update()
+                    return Response('timeout', status= status.HTTP_400_BAD_REQUEST)
 
             else: 
-                return Response('not ok',status.HTTP_400_BAD_REQUEST)
+                return Response('token wrong',status.HTTP_400_BAD_REQUEST)
 
 class verify(APIView):
     def post(self, request):

@@ -78,5 +78,8 @@ class Transaction(models.Model):
     def completed_update(self):
         self.status = 'COMPLETED'
         self.save()
+    def expire_update(self):
+        self.status = 'EXPIRE'
+        self.save()
 
 
