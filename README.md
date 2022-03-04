@@ -4,3 +4,6 @@ For more information https://www.djangoproject.com/
 Using Django rest framerwork  https://www.django-rest-framework.org/
 Using sqlite3 database 
 Run on Python 3.8.5
+
+
+Change account github from my account school to my private account!
